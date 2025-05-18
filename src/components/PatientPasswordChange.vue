@@ -1,20 +1,34 @@
 <template>
   <div class="password-change-container">
     <h2>Change Your Password</h2>
-    <form>
+    <form @submit.prevent="handleChangePasswordRequest">
       <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
       </div>
 
+      <button type="submit">Confirm</button>
+      <p v-if="emailNotFound" style="color: red;">Email not found!</p>
+      <p v-if="successMessage" style="color: green;">Password reset message has been sent to your phone.</p>
+    </form>
+  </div>
+  <br>
+  <div class="password-change-container" v-if="successMessage">
+    <h4>The placeholder SMS code is: 1111</h4>
+    <form @submit.prevent="handleChangePassword">
       <div class="form-group">
-        <label for="phone">Phone Number:</label>
-        <input type="text" id="phone" v-model="phone" placeholder="Enter your phone number" required />
+        <label for="code">SMS Code:</label>
+        <input type="text" id="code" v-model="code" placeholder="Enter the SMS sent to your phone" required />
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" v-model="newPassword" required />
+        <label for="passwordRepeat">Confirm Password:</label>
+        <input type="password" id="passwordRepeat" v-model="passwordRepeat" required />
       </div>
 
-      <router-link to="/" class="confirm-button">
-        <button type="button">Confirm</button>
-      </router-link>
+      <button type="submit">Confirm</button>
+      <p v-if="codeIncorrect" style="color: red;">The SMS code you entered is incorrect</p>
+      <p v-if="passwordMatchError" style="color: red;">The passwords do not match!</p>
+      <p v-if="passwordChanged" style="color: green;">Your password has been reset.</p>
     </form>
   </div>
 </template>
@@ -25,8 +39,53 @@ export default {
   data() {
     return {
       email: '',
-      phone: ''
+      code: '',
+      emailNotFound: false,
+      successMessage: false,
+      codeIncorrect: false,
+      passwordChanged: false,
+      newPassword: '',
+      passwordRepeat: '',
+      passwordMatchError: false,
     };
+  },
+  methods: {
+    handleChangePasswordRequest() {
+      this.emailNotFound = false;
+      this.successMessage = false;
+
+      const patient = this.$patients.find(p => p.email === this.email);
+      const doctor = this.$doctors.find(d => d.email === this.email);
+
+      if (patient || doctor) {
+        this.successMessage = true;
+      } else {
+        this.emailNotFound = true;
+      }
+    },
+    handleChangePassword() {
+      this.codeIncorrect = false;
+      this.passwordChanged = false;
+      this.passwordMatchError = false;
+      
+      const patient = this.$patients.find(p => p.email === this.email);
+      const doctor = this.$doctors.find(d => d.email === this.email);
+
+      if (!(this.code === '1111')) {
+        this.codeIncorrect = true;
+      } else if (this.newPassword != this.passwordRepeat) {
+        this.passwordMatchError = true;
+      } else {
+        if (patient) {
+          patient.password = this.newPassword;
+        } else if (doctor) {
+          doctor.password = this.newPassword;
+        }
+        this.passwordChanged = true;
+      }
+
+
+    }
   }
 };
 </script>

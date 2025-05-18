@@ -57,9 +57,24 @@ export default {
         alert("Passwords do not match!");
         return;
       }
-      // Handle registration logic here (e.g., API call, saving to localStorage)
+
+      const existing = this.$patients.find(user => user.email === this.email);
+      if (existing) {
+        alert("Email already registered!");
+        return;
+      }
+
+      const newUser = {
+        email: this.email,
+        name: this.name,
+        surname: this.surname,
+        phone: this.phone,
+        password: this.password,
+      };
+
+      this.$patients.push(newUser); // Updates global list
+
       alert('Registration successful!');
-      // After successful registration, redirect to login page or dashboard
       this.$router.push('/patient-login');
     }
   }

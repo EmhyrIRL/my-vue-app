@@ -38,20 +38,22 @@ export default {
   },
   methods: {
     handleLogin() {
-      const patient = this.$patients.find(p => p.email === this.email && p.password === this.password);
-      const patientEmailFound = this.$patients.find(p => p.email = this.email)
+      this.loginError = false;
+      this.passwordError = false;
 
-      if (patient) { // Login successful
-        localStorage.setItem('userRole', 'patient');
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', this.email); // Save email or any other user info
-        this.$router.push('/patient-dashboard');
-      } else { // Login failed
-        if (patientEmailFound) {
-          this.passwordError = true;
+      const patient = this.$patients.find(p => p.email === this.email);
+      if (patient) {
+        if (patient.password === this.password) {
+          localStorage.setItem('userRole', 'patient');
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', this.email);
+          localStorage.setItem('loggedInPatient', JSON.stringify(patient));
+          this.$router.push('/patient-dashboard');
         } else {
-          this.loginError = true;
+          this.passwordError = true;
         }
+      } else {
+        this.loginError = true;
       }
     }
   }

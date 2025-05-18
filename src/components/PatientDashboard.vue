@@ -126,13 +126,12 @@ export default {
   },
   methods: {
     setUserData() {
-      const email = localStorage.getItem('userEmail');
-      const patient = this.$patients.find(p => p.email === email);
+      const patientData = JSON.parse(localStorage.getItem('loggedInPatient'));
 
-      if (patient) {
-        this.name = patient.name;
-        this.surname = patient.surname;
-        this.phone = patient.phone;
+      if (patientData) {
+        this.name = patientData.name;
+        this.surname = patientData.surname;
+        this.phone = patientData.phone;
       } else {
         alert("Something went wrong. Can't find user data!");
       }

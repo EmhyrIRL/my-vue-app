@@ -9,14 +9,39 @@ const patients = [
   { email: 'ibrahim.koyuncu@tedu.edu.tr', name: 'İbrahim Başar', surname: 'Koyuncu', phone: '098-765-4321', password: 'pa' },
 ];
 
+/*
+Patient 1
+Email: emirhan.cicekli@tedu.edu.tr
+Password: pa
+
+Patient 2
+Email: ibrahim.koyuncu@tedu.edu.tr
+Password: pa
+*/
+
 const doctors = [
   { email: 'muhammedanildoni@doctor.com', name: 'Muhammed Anıl', surname: 'Doni', password: 'pa', clinicId: 0o001 },
   { email: 'muslumturkerkirtiz@doctor.com', name: 'Müslüm Türker', surname: 'Kırtız', password: 'pa', clinicId: 0o002 },
 ];
 
+/*
+Doctor 1
+Email: muhammedanildoni@doctor.com
+Password: pa
+Doctor 2
+Email: muslumturkerkirtiz@doctor.com
+Password: pa
+*/
+
 const admins = [
   { email: 'yaren.atilgan@tedu.edu.tr', name: 'Admin', password: 'pa' },
 ];
+
+/*
+Admin 1
+Email: yaren.atilgan@tedu.edu.tr
+Password: pa
+*/
 
 const clinics = [
   { name: 'Primary Care Clinic', id: 0o001 },

@@ -1,6 +1,6 @@
 <template>
   <div class="doctor-dashboard-container">
-    <h2>Welcome, Dr. {{ doctor.name }}!</h2>
+    <h2>Welcome, Dr. {{ doctor.name }} {{ doctor.surname }}!</h2>
     
     <!-- Appointments List -->
     <div class="box-section" v-if="appointments.length > 0">
@@ -19,7 +19,7 @@
     <p v-else>No upcoming appointments.</p>
 
     <!-- Medical History Form -->
-    <div class="box-section" v-if="appointments.length > 0">
+    <div class="box-section">
       <h3>Record a Medical History for a Patient</h3>
       <form @submit.prevent="handleMedicalHistorySubmit">
         <div class="form-group">
@@ -36,6 +36,18 @@
       <p v-if="historyError" style="color: red;">Failed to add medical history. Patient not found.</p>
     </div>
 
+    <!-- Search for a Patient's Medical History -->
+    <div class="box-section">
+      <h3>Search for a Patient's Medical History</h3>
+      <form @submit.prevent="findPatientMedicalHistory">
+        <div class="form-group">
+          <label for="searchPatientName">Patient's Name:</label>
+          <input id="searchPatientName" v-model="searchPatientName" type="text" required />
+        </div>
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
     <!-- View Medical History -->
     <div class="box-section" v-if="viewingHistory">
       <h3>View Medical History for {{ viewingHistory.name }}</h3>
@@ -47,18 +59,6 @@
         </ul>
       </div>
       <p v-else>No medical history found for this patient.</p>
-    </div>
-
-    <!-- Search for a Patient's Medical History -->
-    <div class="box-section">
-      <h3>Search for a Patient's Medical History</h3>
-      <form @submit.prevent="findPatientMedicalHistory">
-        <div class="form-group">
-          <label for="searchPatientName">Patient's Name (First Last):</label>
-          <input id="searchPatientName" v-model="searchPatientName" type="text" required />
-        </div>
-        <button type="submit">Search</button>
-      </form>
     </div>
   </div>
 </template>
@@ -88,7 +88,7 @@ export default {
       const userEmail = localStorage.getItem('userEmail');
       this.doctor = this.$doctors.find(doctor => doctor.email === userEmail);
     },
-    findAppointments() {
+    findAppointments() { // Chatgpt wrote this, I'm not sure how it works exactly...
       const userEmail = localStorage.getItem('userEmail');
       this.appointments = this.$appointments.filter(appointment => appointment.doctorEmail === userEmail)
                                              .map(appointment => ({
@@ -98,14 +98,16 @@ export default {
     },
     // Handle medical history form submission
     handleMedicalHistorySubmit() {
-      // Split the full name into first name and surname
-      const [firstName, lastName] = this.patientName.split(' ');
 
-      // Find the patient by both first name and last name
-      const patient = this.$patients.find(patient => {
-        const [name, surname] = patient.name.split(' ');
-        return name.toLowerCase() === firstName.toLowerCase() && surname.toLowerCase() === lastName.toLowerCase();
-      });
+      this.historySuccess = false;
+      this.historyError = false;
+
+      // Split the full name into first name and surname
+      const inputName = this.patientName.trim().toLowerCase();
+
+      const patient = this.$patients.find(patient =>
+        (patient.name.trim().toLowerCase() + ' ' + patient.surname.trim().toLowerCase()) === inputName
+      );
 
       if (patient) {
         // Add the new medical history to the $medicalHistories array
@@ -133,13 +135,15 @@ export default {
 
     // Find and display a patient's medical history
     findPatientMedicalHistory() {
-      const [firstName, lastName] = this.searchPatientName.split(' ');
+      
+      this.viewingHistory = null;
+
+      const inputName = this.searchPatientName.trim().toLowerCase();
 
       // Find the patient by their full name
-      const patient = this.$patients.find(patient => {
-        const [patientFirstName, patientLastName] = patient.name.split(' ');
-        return patientFirstName.toLowerCase() === firstName.toLowerCase() && patientLastName.toLowerCase() === lastName.toLowerCase();
-      });
+      const patient = this.$patients.find(patient =>
+        (patient.name.trim().toLowerCase() + ' ' + patient.surname.trim().toLowerCase()) === inputName
+      );
 
       if (patient) {
         // Set the patient to be viewed

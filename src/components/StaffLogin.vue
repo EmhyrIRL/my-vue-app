@@ -37,30 +37,32 @@ export default {
   },
   methods: {
     handleLogin() {
-      // Check if the email exists in any array
-      const doctor = this.$doctors.find(doctor => doctor.email === this.email && doctor.password === this.password);
-      const admin = this.$admins.find(admin => admin.email === this.email && admin.password === this.password);
-      const drEmailFound = this.$doctors.find(doctor => doctor.email === this.email);
-      const aEmailFound = this.$admins.find(admin => admin.email === this.email);
+      this.loginError = false;
+      this.passwordError = false;
+
+      const doctor = this.$doctors.find(d => d.email === this.email);
+      const admin = this.$admins.find(a => a.email === this.email);
 
       if (doctor) {
-        // Doctor found, store role and set login status
-        localStorage.setItem('userRole', 'doctor');
-        localStorage.setItem('isLoggedIn', 'true');
+        if (doctor.password === this.password) {
+          localStorage.setItem('userRole', 'doctor');
+          localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userEmail', this.email);
         this.$router.push('/doctor-dashboard');
-      } else if (admin) {
-        // Admin found, store role and set login status
-        localStorage.setItem('userRole', 'admin');
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', this.email);
-        this.$router.push('/admin-dashboard');
-      } else {
-        if (drEmailFound || aEmailFound) {
-          this.passwordError = true;
         } else {
-          this.loginError = true;
+          this.passwordError = true;
         }
+      } else if (admin) {
+        if (admin.password === this.password) {
+          localStorage.setItem('userRole', 'admin');
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', this.email);
+          this.$router.push('/admin-dashboard');
+        } else {
+          this.passwordError = true;
+        }
+      } else {
+        this.loginError = true;
       }
     }
   }
