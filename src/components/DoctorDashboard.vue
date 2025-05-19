@@ -7,7 +7,7 @@
       <h3>Your Appointments</h3>
       <ul>
         <li v-for="appointment in appointments" :key="appointment.id">
-          <p><strong>Patient:</strong> {{ appointment.patientName }}</p>
+          <p><strong>Patient:</strong> {{ appointment.patientName }} {{ appointment.patientSurname }}</p>
           <p><strong>Date:</strong> {{ appointment.date }}</p>
           <p><strong>Time:</strong> {{ appointment.time }}</p>
           <p><strong>Reason:</strong> {{ appointment.reason }}</p>
@@ -93,7 +93,8 @@ export default {
       this.appointments = this.$appointments.filter(appointment => appointment.doctorEmail === userEmail)
                                              .map(appointment => ({
                                                 ...appointment,
-                                                patientName: this.$patients.find(patient => patient.email === appointment.patientEmail).name
+                                                patientName: this.$patients.find(patient => patient.email === appointment.patientEmail).name,
+                                                patientSurname: this.$patients.find(patient => patient.email === appointment.patientEmail).surname,
                                               }));
     },
     // Handle medical history form submission
